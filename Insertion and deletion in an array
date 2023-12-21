@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+void insert();
+int delete();
+
+int main(){
+	int n,c=0;
+	printf("Enter the number of elements in the array:");
+	scanf("%d",&n);
+	int arr[n];
+	printf("\nInsertion - 1\nDeletion - 2\nExit - 3\n");
+	printf("Enter your choice :");
+	int k;
+	scanf("%d",&k);
+	while(k <3){
+		if(k == 1){
+			insert(&arr,n);
+			c=0;
+		}
+		else if(k == 2){
+		    if (c <n){
+			   c=delete(arr,n,c);
+		    }
+		    else{
+		        printf("No element to delete\n");
+		    }
+		}
+		else if(k<1 && k>3){
+			printf("Enter a valid choice.\n");
+		}
+		printf("\nInsertion - 1\nDeletion - 2\nExit - 3\n");
+     	printf("Enter your choice :");
+     	scanf("%d",&k);
+     	printf("\n");
+	}
+	printf("Exiting program.");
+}
+
+void insert(int *arr,int n){
+	int i;
+	for (i = 0 ; i<n ; ++i){
+	    printf("Enter element %d:",i+1);
+		scanf("%d",&arr[i]);
+	}
+	printf("\n");
+}
+
+int delete(int *arr,int n,int c){
+    int i;
+    printf("%d is popped\n",arr[0]);
+    for(i = 0 ; i < n ; ++i){
+        arr[i] = arr[i+1];
+    }
+    c++;
+    return c;
+}
