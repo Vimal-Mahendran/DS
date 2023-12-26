@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int findLength(struct Node* head) {
+    int length = 0;
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+struct Node* findIntersection(struct Node* list1, struct Node* list2) {
+    int len1 = findLength(list1);
+    int len2 = findLength(list2);
+
+    int diff = abs(len1 - len2);
+
+    if (len1 > len2) {
+    	int i;
+        for (i = 0; i < diff; i++) {
+            list1 = list1->next;
+        }
+    } 
+	else {
+		int i;
+        for (i = 0; i < diff; i++) {
+            list2 = list2->next;
+        }
+    }
+
+    while (list1 != NULL && list2 != NULL) {
+        if (list1 == list2) {
+            return list1;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+
+    return NULL;
+}
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+int main() {
+    struct Node* head1 = createNode(1);
+    head1->next = createNode(2);
+    head1->next->next = createNode(3);
+    head1->next->next->next = createNode(4);
+    head1->next->next->next->next = createNode(5);
+
+    struct Node* head2 = createNode(10);
+    head2->next = createNode(9);
+    head2->next->next = createNode(8);
+    head2->next->next->next = createNode(7);
+    head2->next->next->next->next = createNode(6);
+    head2->next->next->next->next->next = head1->next->next;
+
+    struct Node* intersection = findIntersection(head1, head2);
+
+    if (intersection != NULL) {
+        printf("Intersection point found at node with data: %d\n", intersection->data);
+    } else {
+        printf("No intersection point found.\n");
+    }
+
+    free(head1);
+    free(head2);
+
+    return 0;
+}
