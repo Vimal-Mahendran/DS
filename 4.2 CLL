@@ -176,7 +176,6 @@ void display() {
 
 void sort() {
     // Sorting is not applicable for Circular Linked List in a traditional sense.
-    // If you have specific sorting criteria, you can implement it accordingly.
     // Sorting can be more complex for a circular linked list.
     printf("Sorting not implemented for Circular Linked List.\n");
 }
