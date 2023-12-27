@@ -1,0 +1,114 @@
+#include <stdio.h>
+
+int size=3;
+int stack[3];
+
+int isFull(int top){
+	return top == size;
+}
+
+int isEmpty(int top){
+	return top == -1;
+}
+
+int push(int num , int top){
+	if( !isFull(top) ){
+		stack[top] = num;
+		printf("\n%d is pushed.\n\n",num);
+		top = top;
+	}
+	else{
+		printf("\nOVERFLOW\n\n");
+		top = top - 1;
+	}
+	return top;
+}
+
+
+void pop(int top){
+	int data;
+	if( !isEmpty(top) ){
+		data = stack[top];
+		printf("\n%d is popped\n\n",data);
+	}
+	else{
+		printf("\nStack is empty.\n\n");
+	}
+}
+
+void display(int top){
+	if(isEmpty(top)){
+		printf("\nStack is empty.");
+	}
+	else{
+	    int i;
+	    printf("\nElements in array : ");
+		for( i = top ; i >= 0 ; i--){
+		    printf("%d,",stack[i]);
+	    }
+	}
+	
+}
+
+int main(){
+	printf("1.Check Full\n2.Check Empty\n3.Push\n4.Pop\n5.Display\n6.Exit\n");
+	printf("Enter your choice:");
+	
+	int n , num , top = -1;
+	scanf("%d",&n);
+	
+	printf("\n");
+	
+	while(n != 6){
+		switch(n){
+			case 1:
+				if(isFull(top)){
+					printf("List is Full.\n\n");
+				}
+				else{
+					printf("List not Full.\n\n");
+				}
+				break;
+			
+			case 2:
+				if(isEmpty(top)){
+					printf("List is Empty.\n\n");
+				}
+				else{
+					printf("List not Empty.\n\n");
+				}
+				break;
+				
+			case 3:
+				printf("\nEnter the number to push:");
+				scanf("%d",&num);
+				top +=1;
+				top = push(num,top);
+				break;
+				
+			case 4:
+				pop(top);
+				top -= 1;
+				break;
+				
+			case 5:
+				display(top);
+				printf("\n\n");
+				break;
+		}
+	if (n > 6 || n < 1){
+		printf("\nEnter a valid choice.\n\n");
+	}
+	if (top < -1){
+		top = -1;
+	}
+	
+	printf("1.Check Full\n2.Check Empty\n3.Push\n4.Pop\n5.Display\n6.Exit\n");
+	printf("Enter your choice:");
+	
+	scanf("%d",&n);
+	
+	printf("\n");
+	}
+	printf("Exiting program...");
+}
