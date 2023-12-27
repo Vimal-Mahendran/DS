@@ -4,7 +4,7 @@ int size=3;
 int stack[3];
 
 int isFull(int top){
-	return top == size;
+	return top == size - 1;
 }
 
 int isEmpty(int top){
@@ -12,7 +12,7 @@ int isEmpty(int top){
 }
 
 int push(int num , int top){
-	if( !isFull(top) ){
+	if( !isFull(top - 1) ){
 		stack[top] = num;
 		printf("\n%d is pushed.\n\n",num);
 		top = top;
