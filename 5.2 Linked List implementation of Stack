@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* top = NULL;
+
+int isEmpty() {
+    return top == NULL;
+}
+
+void push(int num) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("\nOVERFLOW\n\n");
+        return;
+    }
+    newNode->data = num;
+    newNode->next = top;
+    top = newNode;
+    printf("\n%d is pushed.\n\n", num);
+}
+
+void pop() {
+    if (isEmpty()) {
+        printf("\nStack is empty.\n\n");
+        return;
+    }
+    struct Node* temp = top;
+    int data = temp->data;
+    top = top->next;
+    free(temp);
+    printf("\n%d is popped.\n\n", data);
+}
+
+void display() {
+    if (isEmpty()) {
+        printf("\nStack is empty.\n\n");
+        return;
+    }
+    struct Node* current = top;
+    printf("\nElements in stack: ");
+    while (current != NULL) {
+        printf("%d, ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void peek() {
+    if (isEmpty()) {
+        printf("\nStack is empty.\n\n");
+        return;
+    }
+    printf("\nPeek element in stack: %d\n\n", top->data);
+}
+
+int main() {
+    printf("1.Check Empty\n2.Push\n3.Pop\n4.Display\n5.Peek\n6.Exit\n");
+    printf("Enter your choice:");
+
+    int n, num;
+    scanf("%d", &n);
+
+    printf("\n");
+
+    while (n != 6) {
+        switch (n) {
+            case 1:
+                if (isEmpty()) {
+                    printf("Stack is Empty.\n\n");
+                } else {
+                    printf("Stack not Empty.\n\n");
+                }
+                break;
+
+            case 2:
+                printf("\nEnter the number to push:");
+                scanf("%d", &num);
+                push(num);
+                break;
+
+            case 3:
+                pop();
+                break;
+
+            case 4:
+                display();
+                break;
+
+            case 5:
+                peek();
+                break;
+        }
+        if (n > 6 || n < 1) {
+            printf("\nEnter a valid choice.\n\n");
+        }
+
+        printf("1.Check Empty\n2.Push\n3.Pop\n4.Display\n5.Peek\n6.Exit\n");
+        printf("Enter your choice:");
+
+        scanf("%d", &n);
+
+        printf("\n");
+    }
+    printf("Exiting program...\n");
+
+    while (!isEmpty()) {
+        pop();
+    }
+
+    return 0;
+}
