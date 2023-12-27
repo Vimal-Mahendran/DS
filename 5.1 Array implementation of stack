@@ -47,11 +47,20 @@ void display(int top){
 		    printf("%d,",stack[i]);
 	    }
 	}
-	
+}
+
+void peek(int top){
+	if(isEmpty(top)){
+		printf("\nStack is empty.");
+	}
+	else{
+	    printf("\nPeek element in array : ");
+		printf("%d,",stack[top]);
+	}	
 }
 
 int main(){
-	printf("1.Check Full\n2.Check Empty\n3.Push\n4.Pop\n5.Display\n6.Exit\n");
+	printf("1.Check Full\n2.Check Empty\n3.Push\n4.Pop\n5.Display\n6.Peek\n7.Exit\n");
 	printf("Enter your choice:");
 	
 	int n , num , top = -1;
@@ -95,15 +104,20 @@ int main(){
 				display(top);
 				printf("\n\n");
 				break;
+
+                        case 6:
+                                peek(top);
+                                printf("\n\n");
+                                break;
 		}
-	if (n > 6 || n < 1){
+	if (n > 7 || n < 1){
 		printf("\nEnter a valid choice.\n\n");
 	}
 	if (top < -1){
 		top = -1;
 	}
 	
-	printf("1.Check Full\n2.Check Empty\n3.Push\n4.Pop\n5.Display\n6.Exit\n");
+	printf("1.Check Full\n2.Check Empty\n3.Push\n4.Pop\n5.Display\n6.Peek\n7.Exit\n");
 	printf("Enter your choice:");
 	
 	scanf("%d",&n);
