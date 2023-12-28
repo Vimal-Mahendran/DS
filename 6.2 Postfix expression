@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+struct Stack {
+    int top;
+    unsigned capacity;
+    int* array;
+};
+
+struct Stack* createStack(unsigned capacity) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    if (!stack)
+        return NULL;
+
+    stack->top = -1;
+    stack->capacity = capacity;
+    stack->array = (int*)malloc(stack->capacity * sizeof(int));
+
+    if (!stack->array)
+        return NULL;
+
+    return stack;
+}
+
+int isFull(struct Stack* stack) {
+    return stack->top == stack->capacity - 1;
+}
+
+int isEmpty(struct Stack* stack) {
+    return stack->top == -1;
+}
+
+void push(struct Stack* stack, int item) {
+    if (isFull(stack))
+        return;
+
+    stack->array[++stack->top] = item;
+}
+
+int pop(struct Stack* stack) {
+    if (isEmpty(stack))
+        return INT_MIN;
+
+    return stack->array[stack->top--];
+}
+
+int evaluatePostfix(char* exp) {
+    struct Stack* stack = createStack(strlen(exp));
+    int i;
+
+    if (!stack)
+        return -1;
+
+    for (i = 0; exp[i]; ++i) {
+        if (isdigit(exp[i]))
+            push(stack, exp[i] - '0');
+        else {
+            int val1 = pop(stack);
+            int val2 = pop(stack);
+
+            switch (exp[i]) {
+                case '+':
+                    push(stack, val2 + val1);
+                    break;
+                case '-':
+                    push(stack, val2 - val1);
+                    break;
+                case '*':
+                    push(stack, val2 * val1);
+                    break;
+                case '/':
+                    push(stack, val2 / val1);
+                    break;
+            }
+        }
+    }
+
+    return pop(stack);
+}
+
+int main() {
+    char postfixExpression[] = "44 2 / 6 -";
+        
+    int result = evaluatePostfix(postfixExpression);
+
+    printf("Result of the postfix expression: %d\n", result);
+
+    return 0;
+}
