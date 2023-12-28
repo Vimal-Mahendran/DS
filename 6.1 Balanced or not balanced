@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int main(){
+	char str[] = "({[]}";
+	int s = sizeof(str)/sizeof(str[0]);
+	int i,c = 0;
+	printf("Braces = ");
+	for (i = 0 ; i < s - 1 ; i++){
+		printf("%c",str[i]);
+		if (str[i]=='(' || str[i] == '{' || str[i] == '['){
+			c++;
+		}
+		else if (str[i] == ')' || str[i] == '}' || str[i] == ']'){
+			c--;
+		}
+	}
+	if( c == 0 ){
+		printf("\n\nBalanced");
+	}
+	else
+	    printf("\n\nNot Balanced");
+}
