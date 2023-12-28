@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    int arr[MAX_SIZE];
+    int top;
+} Stack;
+
+void initialize(Stack *stack) {
+    stack->top = -1;
+}
+
+int isEmpty(Stack *stack) {
+    return stack->top == -1;
+}
+
+int isFull(Stack *stack) {
+    return stack->top == MAX_SIZE - 1;
+}
+
+void push(Stack *stack, int value) {
+    if (isFull(stack)) {
+        printf("Stack overflow\n");
+        return;
+    }
+    stack->arr[++stack->top] = value;
+}
+
+int pop(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack underflow\n");
+        return -1;
+    }
+    return stack->arr[stack->top--];
+}
+
+void deleteMiddle(Stack *stack, int current, int middle) {
+    if (current == middle) {
+        pop(stack);
+        return;
+    }
+
+    int temp = pop(stack);
+
+    deleteMiddle(stack, current + 1, middle);
+
+    push(stack, temp);
+}
+
+void deleteMiddleElement(Stack *stack) {
+    int size = stack->top + 1;
+    int middle = (size + 1) / 2;
+
+    deleteMiddle(stack, 1, middle);
+}
+
+int main() {
+    Stack stack;
+    initialize(&stack);
+
+    int i;
+    for ( i = 1; i <= 5; i++) {
+        push(&stack, i);
+    }
+
+    printf("Original Stack: ");
+    for (i = 0; i <= stack.top; i++) {
+        printf("%d ", stack.arr[i]);
+    }
+    printf("\n");
+
+    deleteMiddleElement(&stack);
+
+    printf("Modified Stack: ");
+    for (i = 0; i <= stack.top; i++) {
+        printf("%d ", stack.arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
