@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+}*top;
+
+void add_top_bot(){
+	struct Node *n;
+	if (top == NULL){
+		printf("Stack is empty.");
+	}
+	
+	else{
+		int Top , Bot;
+		Top = top -> data;
+		n=top;
+		while(n != NULL){
+			Bot = n -> data;
+			n = n -> next;
+		}
+		printf("Sum of bottom and top = %d",Top+Bot);
+	}
+}
+
+void push(int num) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("\nOVERFLOW\n\n");
+        return;
+    }
+    newNode->data = num;
+    newNode->next = top;
+    top = newNode;
+    printf("\n%d is pushed.\n\n", num);
+}
+
+int main() {
+    printf("1.Add First and last element\n2.Push\n3.Exit\n");
+    printf("Enter your choice:");
+
+    int n, num;
+    scanf("%d", &n);
+
+    printf("\n");
+
+    while (n != 3) {
+        switch (n) {
+            case 1:
+            	add_top_bot();
+            	
+            case 2:
+                printf("\nEnter the number to push:");
+                scanf("%d", &num);
+                push(num);
+                break;
+
+        }
+        if (n > 3 || n < 1) {
+            printf("\nEnter a valid choice.\n\n");
+        }
+
+        printf("1.Add First and last element\n2.Push\n3.Exit\n");
+        printf("Enter your choice:");
+
+        scanf("%d", &n);
+
+        printf("\n");
+    }
+    printf("Exiting program...\n");
+
+    return 0;
+}
