@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct QueueNode {
+    int data;
+    struct QueueNode* next;
+};
+
+struct Queue {
+    struct QueueNode* front;
+    struct QueueNode* rear;
+};
+
+void initializeQueue(struct Queue* q) {
+    q->front = q->rear = NULL;
+}
+
+int isQueueEmpty(struct Queue* q) {
+    return q->front == NULL;
+}
+
+void enqueue(struct Queue* q, int data) {
+    struct QueueNode* newNode = (struct QueueNode*)malloc(sizeof(struct QueueNode));
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (isQueueEmpty(q)) {
+        q->front = q->rear = newNode;
+    } else {
+        q->rear->next = newNode;
+        q->rear = newNode;
+    }
+}
+
+int dequeue(struct Queue* q) {
+    if (isQueueEmpty(q)) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+
+    struct QueueNode* temp = q->front;
+    int data = temp->data;
+
+    if (q->front == q->rear) {
+        q->front = q->rear = NULL;
+    } else {
+        q->front = q->front->next;
+    }
+
+    free(temp);
+    return data;
+}
+
+struct Stack {
+    struct Queue q1;
+    struct Queue q2;
+};
+
+void initializeStack(struct Stack* s) {
+    initializeQueue(&(s->q1));
+    initializeQueue(&(s->q2));
+}
+
+void push(struct Stack* s, int data) {
+    enqueue(&(s->q1), data);
+}
+
+int pop(struct Stack* s) {
+    if (isQueueEmpty(&(s->q1))) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+
+    while (s->q1.front != s->q1.rear) {
+        enqueue(&(s->q2), dequeue(&(s->q1)));
+    }
+
+    int poppedData = dequeue(&(s->q1));
+
+    struct Queue temp = s->q1;
+    s->q1 = s->q2;
+    s->q2 = temp;
+
+    return poppedData;
+}
+
+void displayStack(struct Stack* s) {
+    printf("Stack: ");
+    while (!isQueueEmpty(&(s->q1))) {
+        int data = dequeue(&(s->q1));
+        printf("%d ", data);
+        enqueue(&(s->q2), data);
+    }
+    printf("\n");
+
+    struct Queue temp = s->q1;
+    s->q1 = s->q2;
+    s->q2 = temp;
+}
+
+int main() {
+    struct Stack stack;
+    initializeStack(&stack);
+
+    int choice, num;
+
+    do {
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the number to push: ");
+                scanf("%d", &num);
+                push(&stack, num);
+                break;
+
+            case 2:
+                printf("Popped: %d\n", pop(&stack));
+                break;
+
+            case 3:
+                displayStack(&stack);
+                break;
+
+            case 4:
+                printf("Exiting program\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
