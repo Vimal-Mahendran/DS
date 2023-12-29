@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct StackNode {
+    int data;
+    struct StackNode* next;
+};
+
+struct Stack {
+    struct StackNode* top;
+};
+
+void initializeStack(struct Stack* s) {
+    s->top = NULL;
+}
+
+int isStackEmpty(struct Stack* s) {
+    return s->top == NULL;
+}
+
+void push(struct Stack* s, int data) {
+    struct StackNode* newNode = (struct StackNode*)malloc(sizeof(struct StackNode));
+    newNode->data = data;
+    newNode->next = s->top;
+    s->top = newNode;
+}
+
+int pop(struct Stack* s) {
+    if (isStackEmpty(s)) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+
+    struct StackNode* temp = s->top;
+    int data = temp->data;
+    s->top = temp->next;
+    free(temp);
+    return data;
+}
+
+struct Queue {
+    struct Stack s1;
+    struct Stack s2;
+};
+
+void initializeQueue(struct Queue* q) {
+    initializeStack(&(q->s1));
+    initializeStack(&(q->s2));
+}
+
+void enqueue(struct Queue* q, int data) {
+    push(&(q->s1), data);
+}
+
+int dequeue(struct Queue* q) {
+    if (isStackEmpty(&(q->s1)) && isStackEmpty(&(q->s2))) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+
+    if (isStackEmpty(&(q->s2))) {
+        while (!isStackEmpty(&(q->s1))) {
+            push(&(q->s2), pop(&(q->s1)));
+        }
+    }
+
+    return pop(&(q->s2));
+}
+
+void displayQueue(struct Queue* q) {
+    struct StackNode* temp = q->s1.top;
+
+    printf("Queue: ");
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    temp = q->s2.top;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    printf("\n");
+}
+
+int peek(struct Queue* q) {
+    if (isStackEmpty(&(q->s1)) && isStackEmpty(&(q->s2))) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+
+    if (isStackEmpty(&(q->s2))) {
+        while (!isStackEmpty(&(q->s1))) {
+            push(&(q->s2), pop(&(q->s1)));
+        }
+    }
+
+    return q->s2.top->data;
+}
+
+int main() {
+    struct Queue queue;
+    initializeQueue(&queue);
+
+    int choice, num;
+
+    do {
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Peek\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the number to enqueue: ");
+                scanf("%d", &num);
+                enqueue(&queue, num);
+                break;
+
+            case 2:
+                printf("Dequeued: %d\n", dequeue(&queue));
+                break;
+
+            case 3:
+                displayQueue(&queue);
+                break;
+
+            case 4:
+                printf("Peeked: %d\n", peek(&queue));
+                break;
+
+            case 5:
+                printf("Exiting program\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
