@@ -1,0 +1,292 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+enum Color { RED, BLACK };
+
+typedef struct Node {
+    int data;
+    enum Color color;
+    struct Node *parent, *left, *right;
+} Node;
+
+typedef struct RBTree {
+    Node *root;
+    Node *nil;
+} RBTree;
+
+Node *createNode(int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->data = data;
+    newNode->color = RED;
+    newNode->parent = NULL;
+    newNode->left = NULL;
+    newNode->right = NULL;
+
+    return newNode;
+}
+
+RBTree *createRBTree() {
+    RBTree *tree = (RBTree *)malloc(sizeof(RBTree));
+    if (tree == NULL) {
+        printf("Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    tree->nil = createNode(0);
+    tree->nil->color = BLACK;
+    tree->root = tree->nil;
+
+    return tree;
+}
+
+void leftRotate(RBTree *tree, Node *x) {
+    Node *y = x->right;
+    x->right = y->left;
+
+    if (y->left != tree->nil) {
+        y->left->parent = x;
+    }
+
+    y->parent = x->parent;
+
+    if (x->parent == tree->nil) {
+        tree->root = y;
+    } else if (x == x->parent->left) {
+        x->parent->left = y;
+    } else {
+        x->parent->right = y;
+    }
+
+    y->left = x;
+    x->parent = y;
+}
+
+void rightRotate(RBTree *tree, Node *y) {
+    Node *x = y->left;
+    y->left = x->right;
+
+    if (x->right != tree->nil) {
+        x->right->parent = y;
+    }
+
+    x->parent = y->parent;
+
+    if (y->parent == tree->nil) {
+        tree->root = x;
+    } else if (y == y->parent->left) {
+        y->parent->left = x;
+    } else {
+        y->parent->right = x;
+    }
+
+    x->right = y;
+    y->parent = x;
+}
+
+void insertFixup(RBTree *tree, Node *z) {
+    while (z->parent->color == RED) {
+        if (z->parent == z->parent->parent->left) {
+            Node *y = z->parent->parent->right;
+            if (y->color == RED) {
+                z->parent->color = BLACK;
+                y->color = BLACK;
+                z->parent->parent->color = RED;
+                z = z->parent->parent;
+            } else {
+                if (z == z->parent->right) {
+                    z = z->parent;
+                    leftRotate(tree, z);
+                }
+                z->parent->color = BLACK;
+                z->parent->parent->color = RED;
+                rightRotate(tree, z->parent->parent);
+            }
+        } else {
+            Node *y = z->parent->parent->left;
+            if (y->color == RED) {
+                z->parent->color = BLACK;
+                y->color = BLACK;
+                z->parent->parent->color = RED;
+                z = z->parent->parent;
+            } else {
+                if (z == z->parent->left) {
+                    z = z->parent;
+                    rightRotate(tree, z);
+                }
+                z->parent->color = BLACK;
+                z->parent->parent->color = RED;
+                leftRotate(tree, z->parent->parent);
+            }
+        }
+    }
+
+    tree->root->color = BLACK;
+}
+
+void insertNode(RBTree *tree, int data) {
+    Node *z = createNode(data);
+    Node *y = tree->nil;
+    Node *x = tree->root;
+
+    while (x != tree->nil) {
+        y = x;
+        if (z->data < x->data) {
+            x = x->left;
+        } else {
+            x = x->right;
+        }
+    }
+
+    z->parent = y;
+
+    if (y == tree->nil) {
+        tree->root = z;
+    } else if (z->data < y->data) {
+        y->left = z;
+    } else {
+        y->right = z;
+    }
+
+    z->left = tree->nil;
+    z->right = tree->nil;
+    z->color = RED;
+
+    insertFixup(tree, z);
+}
+
+Node *treeMinimum(RBTree *tree, Node *x) {
+    while (x->left != tree->nil) {
+        x = x->left;
+    }
+    return x;
+}
+
+void transplant(RBTree *tree, Node *u, Node *v) {
+    if (u->parent == tree->nil) {
+        tree->root = v;
+    } else if (u == u->parent->left) {
+        u->parent->left = v;
+    } else {
+        u->parent->right = v;
+    }
+    v->parent = u->parent;
+}
+
+void deleteFixup(RBTree *tree, Node *x) {
+    while (x != tree->root && x->color == BLACK) {
+        if (x == x->parent->left) {
+            Node *w = x->parent->right;
+            if (w->color == RED) {
+                w->color = BLACK;
+                x->parent->color = RED;
+                leftRotate(tree, x->parent);
+                w = x->parent->right;
+            }
+            if (w->left->color == BLACK && w->right->color == BLACK) {
+                w->color = RED;
+                x = x->parent;
+            } else {
+                if (w->right->color == BLACK) {
+                    w->left->color = BLACK;
+                    w->color = RED;
+                    rightRotate(tree, w);
+                    w = x->parent->right;
+                }
+                w->color = x->parent->color;
+                x->parent->color = BLACK;
+                w->right->color = BLACK;
+                leftRotate(tree, x->parent);
+                x = tree->root;
+            }
+        } else {
+            Node *w = x->parent->left;
+            if (w->color == RED) {
+                w->color = BLACK;
+                x->parent->color = RED;
+                rightRotate(tree, x->parent);
+                w = x->parent->left;
+            }
+            if (w->right->color == BLACK && w->left->color == BLACK) {
+                w->color = RED;
+                x = x->parent;
+            } else {
+                if (w->left->color == BLACK) {
+                    w->right->color = BLACK;
+                    w->color = RED;
+                    leftRotate(tree, w);
+                    w = x->parent->left;
+                }
+                w->color = x->parent->color;
+                x->parent->color = BLACK;
+                w->left->color = BLACK;
+                rightRotate(tree, x->parent);
+                x = tree->root;
+            }
+        }
+    }
+
+    x->color = BLACK;
+}
+
+Node *searchNode(Node *root, int value) {
+    while (root != NULL && root->data != value) {
+        if (value < root->data) {
+            root = root->left;
+        } else {
+            root = root->right;
+        }
+    }
+    return root;
+}
+
+void deleteNode(RBTree *tree, int value) {
+    Node *z = searchNode(tree->root, value);
+    if (z != tree->nil) {
+        deleteFixup(tree, z);
+        printf("Node with value %d deleted.\n", value);
+    } else {
+        printf("Node with value %d not found.\n", value);
+    }
+}
+
+int main() {
+    RBTree *tree = createRBTree();
+    int choice, value;
+
+    do {
+        printf("\n1. Insert a node\n");
+        printf("2. Delete a node\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the value to insert: ");
+                scanf("%d", &value);
+                insertNode(tree, value);
+                printf("Node with value %d inserted.\n", value);
+                break;
+
+            case 2:
+                printf("Enter the value to delete: ");
+                scanf("%d", &value);
+                deleteNode(tree, value);
+                break;
+
+            case 3:
+                printf("Exiting the program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 3);
+
+    return 0;
+}
