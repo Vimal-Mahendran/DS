@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int key;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+Node* createNode(int key) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->key = key;
+    newNode->left = NULL;
+    newNode->right = NULL;
+
+    return newNode;
+}
+
+Node* rightRotate(Node* x) {
+    Node* y = x->left;
+    x->left = y->right;
+    y->right = x;
+    return y;
+}
+
+Node* leftRotate(Node* x) {
+    Node* y = x->right;
+    x->right = y->left;
+    y->left = x;
+    return y;
+}
+
+Node* splay(Node* root, int key) {
+    if (root == NULL || root->key == key) {
+        return root;
+    }
+
+    if (key < root->key) {
+        if (root->left == NULL) {
+            return root;
+        }
+
+        if (key < root->left->key) {
+            root->left->left = splay(root->left->left, key);
+            root = rightRotate(root);
+        } else if (key > root->left->key) {
+            root->left->right = splay(root->left->right, key);
+            if (root->left->right != NULL) {
+                root->left = leftRotate(root->left);
+            }
+        }
+
+        return (root->left == NULL) ? root : rightRotate(root);
+    } else {
+        if (root->right == NULL) {
+            return root;
+        }
+
+        if (key > root->right->key) {
+            root->right->right = splay(root->right->right, key);
+            root = leftRotate(root);
+        } else if (key < root->right->key) {
+            root->right->left = splay(root->right->left, key);
+            if (root->right->left != NULL) {
+                root->right = rightRotate(root->right);
+            }
+        }
+
+        return (root->right == NULL) ? root : leftRotate(root);
+    }
+}
+
+Node* insert(Node* root, int key) {
+    if (root == NULL) {
+        return createNode(key);
+    }
+
+    root = splay(root, key);
+
+    if (key < root->key) {
+        Node* newNode = createNode(key);
+        newNode->right = root;
+        newNode->left = root->left;
+        root->left = NULL;
+        return newNode;
+    } else if (key > root->key) {
+        Node* newNode = createNode(key);
+        newNode->left = root;
+        newNode->right = root->right;
+        root->right = NULL;
+        return newNode;
+    } else {
+        return root;
+    }
+}
+
+Node* deleteKey(Node* root, int key) {
+    if (root == NULL) {
+        return root;
+    }
+
+    root = splay(root, key);
+
+    if (key == root->key) {
+        Node* temp = root;
+        if (root->left == NULL) {
+            root = root->right;
+        } else {
+            Node* newRoot = splay(root->left, key);
+            newRoot->right = root->right;
+            root = newRoot;
+        }
+        free(temp);
+    }
+
+    return root;
+}
+
+int main() {
+    Node* root = NULL;
+    int choice, key;
+
+    do {
+        printf("\n1. Insert a key\n");
+        printf("2. Delete a key\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the key to insert: ");
+                scanf("%d", &key);
+                root = insert(root, key);
+                printf("Key %d inserted.\n", key);
+                break;
+
+            case 2:
+                printf("Enter the key to delete: ");
+                scanf("%d", &key);
+                root = deleteKey(root, key);
+                printf("Key %d deleted.\n", key);
+                break;
+
+            case 3:
+                printf("Exiting the program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 3);
+
+    return 0;
+}
