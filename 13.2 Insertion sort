@@ -1,0 +1,50 @@
+#include<stdio.h>
+void swap(int *x,int *y)
+{
+	int temp = *x;
+	*x = *y;
+	*y = temp;
+}
+
+void inserstionsort(int a[],int n)
+{
+	int i,j,b,h;
+	for(i=1;i<n;i++)
+	{
+		h = i;
+
+		for(j=0;j<h;j++)
+		{
+		    if(a[j] >a[h])
+			{
+				swap(&a[j],&a[h]);    
+			}
+			
+	    }
+
+	}
+}
+print(int a[],int n)
+{
+	int i;
+	for(i=0;i<n;i++)
+	{
+		if(i == n-1)
+		{
+			printf("%d",a[i]);
+		}
+		else
+		{
+			printf("%d,",a[i]);
+		}
+	}
+}
+int main()
+{
+	int a[] = { 64, 34, 25, 12, 22, 11, 90 };
+	int n = sizeof(a)/sizeof(a[0]);
+	inserstionsort(a,n);
+	printf("insertion sorted array :  \n");
+	print(a,n);
+	return 0;
+}
