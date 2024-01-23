@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct BTreeNode {
+    int *keys; 
+    int t; 
+    struct BTreeNode **children;
+    int n; 
+    int leaf; 
+} BTreeNode;
+
+
+BTreeNode *createNode(int t, int leaf) {
+    BTreeNode *newNode = (BTreeNode *)malloc(sizeof(BTreeNode));
+    newNode->keys = (int *)malloc(sizeof(int) * (2 * t - 1));
+    newNode->children = (BTreeNode **)malloc(sizeof(BTreeNode *) * (2 * t));
+    newNode->n = 0;
+    newNode->leaf = leaf;
+    return newNode;
+}
