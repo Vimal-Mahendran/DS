@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+
+void topologicalOrdering(int graph[MAX_SIZE][MAX_SIZE], int numVertices) {
+    int indegree[MAX_SIZE] = {0};
+    int queue[MAX_SIZE];
+    int front = -1, rear = -1;
+
+
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            indegree[i] += graph[j][i];
+        }
+    }
+
+
+    for (int i = 0; i < numVertices; i++) {
+        if (indegree[i] == 0) {
+            queue[++rear] = i;
+        }
+    }
+
+
+    while (front != rear) {
+        int vertex = queue[++front];
+        printf("%d ", vertex);
+
+        for (int i = 0; i < numVertices; i++) {
+            if (graph[vertex][i] == 1) {
+                indegree[i]--;
+
+                if (indegree[i] == 0) {
+                    queue[++rear] = i;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int numVertices;
+    int graph[MAX_SIZE][MAX_SIZE];
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &numVertices);
+
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = 0; j < numVertices; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    printf("Topological Ordering: ");
+    topologicalOrdering(graph, numVertices);
+
+    return 0;
+}
