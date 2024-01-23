@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+void heapify(int arr[], int n, int i, int order) {
+    int largest = i; // Initialize largest as root
+    int left = 2 * i + 1; // Left child
+    int right = 2 * i + 2; // Right child
+
+
+    if (left < n && ((order == 1 && arr[left] > arr[largest]) || (order == 2 && arr[left] < arr[largest])))
+        largest = left;
+
+    
+    if (right < n && ((order == 1 && arr[right] > arr[largest]) || (order == 2 && arr[right] < arr[largest])))
+        largest = right;
+
+ 
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest, order);
+    }
+}
+
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i, order);
+
+   
+    for (int i = n - 1; i > 0; i--) {
+   
+        swap(&arr[0], &arr[i]);
+
+        heapify(arr, i, 0, order);
+    }
+}
+
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+
+int main() {
+    int arr[] = { 12, 11, 13, 5, 6, 7 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: ");
+    printArray(arr, n);
+
+    heapSort(arr, n, 1);
+    printf("Array sorted in ascending order: ");
+    printArray(arr, n);
+
+  
+    heapSort(arr, n, 2);
+    printf("Array sorted in descending order: ");
+    printArray(arr, n);
+
+    return 0;
+}
