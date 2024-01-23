@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct HeapNode {
+    int data;
+};
+
+
+struct Heap {
+    int capacity;
+    int size;
+    struct HeapNode* nodes;
+};
+
+struct Heap* createHeap(int capacity) {
+    struct Heap* heap = (struct Heap*)malloc(sizeof(struct Heap));
+    heap->capacity = capacity;
+    heap->size = 0;
+    heap->nodes = (struct HeapNode*)malloc(capacity * sizeof(struct HeapNode));
+    return heap;
+}
+
+
+void swap(struct HeapNode* a, struct HeapNode* b) {
+    struct HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(struct Heap* heap, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->nodes[left].data < heap->nodes[smallest].data)
+        smallest = left;
+
+    if (right < heap->size && heap->nodes[right].data < heap->nodes[smallest].data)
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap->nodes[i], &heap->nodes[smallest]);
+        heapify(heap, smallest);
+    }
+}
+
+void insert(struct Heap* heap, int data) {
+    if (heap->size == heap->capacity) {
+        printf("Heap is full. Cannot insert more nodes.\n");
+        return;
+    }
+
+    struct HeapNode newNode;
+    newNode.data = data;
+
+    int i = heap->size;
+    heap->nodes[i] = newNode;
+
+    while (i != 0 && heap->nodes[i].data < heap->nodes[(i - 1) / 2].data) {
+        swap(&heap->nodes[i], &heap->nodes[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+
+    heap->size++;
+}
+
+
+void printHeap(struct Heap* heap) {
+    printf("Heap: ");
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->nodes[i].data);
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Heap* minHeap = createHeap(10);
+    struct Heap* maxHeap = createHeap(10);
+
+    insert(minHeap, 5);
+    insert(minHeap, 3);
+    insert(minHeap, 8);
+    insert(minHeap, 1);
+    insert(minHeap, 10);
+
+    insert(maxHeap, 5);
+    insert(maxHeap, 3);
+    insert(maxHeap, 8);
+    insert(maxHeap, 1);
+    insert(maxHeap, 10);
+
+    printf("Min Heap: ");
+    printHeap(minHeap);
+
+    printf("Max Heap: ");
+    printHeap(maxHeap);
+
+    return 0;
+}
